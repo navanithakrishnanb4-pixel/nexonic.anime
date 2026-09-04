@@ -10,6 +10,11 @@ export type WorkStatus =
   | "completed"
   | "archived";
 
+export interface WorkCredit {
+  name: string;
+  role: string;
+}
+
 export interface Work {
   id: string;
   title: string;
@@ -25,6 +30,10 @@ export interface Work {
   featured: boolean;
   published: boolean;
   publishedAt: string | null;
+  /** Optional detail-page fields. Absent/empty = section is not rendered. */
+  trailerUrl: string | null;
+  galleryImageUrls: string[];
+  credits: WorkCredit[];
 }
 
 export interface JournalPost {

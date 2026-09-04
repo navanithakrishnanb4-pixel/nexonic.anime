@@ -8,6 +8,10 @@ import { DURATION } from "@/lib/motion";
 
 interface WorkCardProps {
   work: Work;
+  /** Override the default /works/[slug] destination — used by /watch to
+   *  link the same card into the watch experience instead of the work
+   *  detail page, without duplicating this component. */
+  href?: string;
 }
 
 const STATUS_LABEL: Record<Work["status"], string> = {
@@ -24,21 +28,26 @@ const STATUS_LABEL: Record<Work["status"], string> = {
  * Status text is derived from Work.status, never hard-coded per-card —
  * per the architecture note that badges must not be typed into pages.
  *
- * NOTE ON MOTION: this deliberately does NOT attempt the "poster expands
- * into work-detail hero" shared-element transition from the original
- * spec. That interaction was never actually designed in the Stitch ZIP
- * (see architecture step, section H) — it needs its own design pass
- * before it's built, not an improvised version bolted onto this card.
+ * MOTION: the cover image carries a layoutId (`work-artwork-{slug}`)
+ * matched by ArtworkFrame on the Work Detail hero, for Framer Motion's
+ * shared-layout image continuity. See the Step 10 report for an honest
+ * caveat: PageTransition currently unmounts the outgoing page before
+ * mounting the incoming one (AnimatePresence mode="wait"), which limits
+ * how much true cross-route continuity Framer Motion can produce. The
+ * layoutId is wired up correctly; whether it reads as a strong "shared
+ * element" effect or just consistent framing/timing depends on that
+ * mode setting, which I did not change without approval.
  */
-export function WorkCard({ work }: WorkCardProps) {
+export function WorkCard({ work, href }: WorkCardProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
     <Link
-      href={`/works/${work.slug}`}
+      href={href ?? `/works/${work.slug}`}
       className="group block rounded-xl overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       <motion.div
+        layoutId={`work-artwork-${work.slug}`}
         className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-surface-container-low"
         whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
         transition={{ duration: DURATION.standard }}

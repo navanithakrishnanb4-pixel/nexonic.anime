@@ -13,6 +13,9 @@ interface ArtworkFrameProps {
   imagePosition?: string;
   className?: string;
   priority?: boolean;
+  /** Optional shared layout id for Work Card → Work Detail image
+   *  continuity. See WorkCard's cover image for the matching id. */
+  layoutId?: string;
 }
 
 /**
@@ -32,15 +35,17 @@ export function ArtworkFrame({
   imagePosition = "center",
   className = "",
   priority = false,
+  layoutId,
 }: ArtworkFrameProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
     <motion.div
+      layoutId={layoutId}
       className={`relative w-full overflow-hidden rounded-xl border border-outline-variant/40 bg-surface-container-low ${className}`}
       initial={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.98 }}
       animate={shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }}
-      transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
+      transition={{ duration: 0.7, ease: EASE, delay: layoutId ? 0 : 0.15 }}
     >
       {/* corner brackets — restrained, no glow */}
       <span className="pointer-events-none absolute top-3 left-3 w-4 h-4 border-t border-l border-on-surface/25 z-10" />

@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { TopAppBar } from "@/components/layout/TopAppBar";
-import { BottomNavBar } from "@/components/layout/BottomNavBar";
-import { Footer } from "@/components/layout/Footer";
-import { PageTransition } from "@/components/motion/PageTransition";
 
 export const metadata: Metadata = {
   title: {
@@ -14,6 +10,19 @@ export const metadata: Metadata = {
     "NEXONIC is an independent animation studio building original stories and technology.",
 };
 
+/**
+ * Root layout, deliberately minimal as of Step 17.
+ *
+ * Previously this rendered TopAppBar/BottomNavBar/Footer/PageTransition
+ * directly, which was correct while the only routes were public pages.
+ * Step 17 adds /admin, which must NEVER show the public site's nav —
+ * per the architecture rule that "the public website must never expose
+ * Admin navigation" (and the inverse: admin shouldn't show a consumer
+ * bottom-tab-bar or public footer either). So the public chrome moved
+ * to `app/(site)/layout.tsx`, and `/admin` gets its own chrome in
+ * `app/admin/layout.tsx`. This file now only owns what's truly global:
+ * html/body shell, fonts, and metadata defaults.
+ */
 export default function RootLayout({
   children,
 }: {
@@ -31,16 +40,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen flex flex-col font-body-md text-body-md overflow-x-hidden pt-16 pb-16 md:pb-0">
-        <a href="#main-content" className="sr-only sr-only-focusable">
-          Skip to content
-        </a>
-        <TopAppBar />
-        <main id="main-content" className="flex-grow flex flex-col">
-          <PageTransition>{children}</PageTransition>
-        </main>
-        <Footer />
-        <BottomNavBar />
+      <body className="min-h-screen flex flex-col font-body-md text-body-md overflow-x-hidden bg-background text-on-background">
+        {children}
       </body>
     </html>
   );

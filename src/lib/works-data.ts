@@ -11,6 +11,23 @@ export async function getAllWorks(): Promise<Work[]> {
   return [];
 }
 
+/**
+ * Returns the published Work matching `slug`, or null if none exists.
+ * Currently always null — there are zero real works. The Work Detail
+ * page treats null as "not found," not as an error, and renders the
+ * dedicated not-found state rather than crashing or inventing content.
+ */
+export async function getWorkBySlug(slug: string): Promise<Work | null> {
+  const works = await getAllWorks();
+  return works.find((w) => w.slug === slug) ?? null;
+}
+
+/** Admin lookup by id (public pages look up by slug instead). */
+export async function getWorkById(id: string): Promise<Work | null> {
+  const works = await getAllWorks();
+  return works.find((w) => w.id === id) ?? null;
+}
+
 export const workCategoryFilters = [
   { label: "All", value: "all" },
   { label: "Series", value: "series" },
