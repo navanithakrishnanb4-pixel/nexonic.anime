@@ -16,10 +16,10 @@ interface EmptyStateProps {
 export function EmptyState({ icon, message, className = "" }: EmptyStateProps) {
   return (
     <div
-      className={`bg-surface-container-low rounded-xl border border-surface-container p-xl flex flex-col items-center justify-center text-center min-h-[300px] ${className}`}
+      className={`bg-ink-800/50 rounded-2xl border border-white/10 p-12 flex flex-col items-center justify-center text-center min-h-[300px] ${className}`}
     >
-      <Icon name={icon} className="text-outline-variant mb-md opacity-50" size={48} />
-      <p className="font-body-lg text-body-lg text-on-surface-variant">{message}</p>
+      <Icon name={icon} className="text-paper-500 mb-4 opacity-60" size={48} />
+      <p className="font-outfit text-base text-paper-400">{message}</p>
     </div>
   );
 }

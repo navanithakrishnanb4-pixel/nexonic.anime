@@ -1,13 +1,12 @@
 import type { Episode, Work } from "@/lib/types";
 import { getAllWorks, getWorkBySlug } from "@/lib/works-data";
+import { getEpisodesForWork } from "@/lib/episodes-data";
 
 /**
- * TEMPORARY DATA LAYER for Watch. Reuses works-data.ts rather than
- * duplicating a second "Work" source — a watchable series IS a Work,
- * just one with published episodes. Episodes have no seam of their
- * own yet (no episodes-data.ts) because there is nothing to fetch:
- * this file is where a real getEpisodesForWork(workId) call plugs in
- * later without changing any component below it.
+ * Watch data seam. A watchable series IS a Work, just one with
+ * published episodes — this file reuses works-data.ts rather than
+ * duplicating a second "Work" source, and now that episodes-data.ts
+ * exists, groups its real Episode rows by season for the Watch UI.
  */
 
 export interface SeasonGroup {
@@ -15,11 +14,38 @@ export interface SeasonGroup {
   episodes: Episode[];
 }
 
-/** Works that have at least one published episode. Currently always []. */
-export async function getWatchableWorks(): Promise<Work[]> {
+export interface EpisodeWithWork {
+  episode: Episode;
+  work: Work;
+}
+
+/**
+ * Flat, real, cross-series episode feed for the Watch landing page's
+ * "Latest Episodes" shelf — not a fabricated "New This Week" bucket.
+ * Sorted by each episode's real release_date; with zero episodes
+ * (current state) this is simply [], which the page's own empty state
+ * already handles.
+ */
+export async function getLatestEpisodesAcrossWorks(limit = 8): Promise<EpisodeWithWork[]> {
   const works = await getAllWorks();
-  const episodesByWork = await getEpisodesIndex();
-  return works.filter((w) => (episodesByWork[w.id]?.length ?? 0) > 0);
+  const perWork = await Promise.all(
+    works.map(async (w) => (await getEpisodesForWork(w.id)).map((episode) => ({ episode, work: w })))
+  );
+  return perWork
+    .flat()
+    .sort((a, b) => (b.episode.releaseDate ?? "").localeCompare(a.episode.releaseDate ?? ""))
+    .slice(0, limit);
+}
+
+/** Per-series episode list, paired with the work — used for Watch's per-series shelves. */
+export async function getWatchableWorksWithEpisodes(): Promise<
+  { work: Work; episodes: Episode[] }[]
+> {
+  const works = await getAllWorks();
+  const withEpisodes = await Promise.all(
+    works.map(async (w) => ({ work: w, episodes: await getEpisodesForWork(w.id) }))
+  );
+  return withEpisodes.filter((w) => w.episodes.length > 0);
 }
 
 export async function getWorkForWatch(
@@ -28,18 +54,12 @@ export async function getWorkForWatch(
   const work = await getWorkBySlug(slug);
   if (!work) return null;
 
-  const episodes = (await getEpisodesIndex())[work.id] ?? [];
+  const episodes = await getEpisodesForWork(work.id);
   const seasons = groupBySeason(episodes);
   return { work, seasons };
 }
 
 // --- internal ---
-
-async function getEpisodesIndex(): Promise<Record<string, Episode[]>> {
-  // No episode source exists yet. Real implementation later: fetch all
-  // published episodes and group by workId.
-  return {};
-}
 
 function groupBySeason(episodes: Episode[]): SeasonGroup[] {
   const map = new Map<number, Episode[]>();

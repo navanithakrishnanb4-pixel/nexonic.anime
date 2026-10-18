@@ -7,17 +7,17 @@ import Link from "next/link";
 type Variant = "primary" | "secondary";
 
 const baseClasses =
-  "inline-flex items-center justify-center px-8 py-4 rounded-full font-label-md text-label-md " +
+  "inline-flex items-center justify-center px-8 py-4 rounded-full font-outfit text-sm font-semibold " +
   "transition-all duration-200 transform active:scale-95 disabled:opacity-40 disabled:pointer-events-none " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neon-violet";
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-primary text-on-primary hover:bg-primary-fixed-dim hover:scale-[1.02] " +
-    "shadow-[0_0_40px_rgba(202,190,255,0.1)]",
+    "bg-gradient-to-r from-neon-violet to-neon-pink-deep text-white hover:opacity-90 hover:scale-[1.02] " +
+    "shadow-lg shadow-neon-violet/20",
   secondary:
-    "bg-transparent border border-outline-variant text-on-surface " +
-    "hover:bg-surface-container-high hover:border-outline hover:scale-[1.02]",
+    "bg-transparent border border-white/15 text-paper-100 " +
+    "hover:bg-white/5 hover:border-white/30 hover:scale-[1.02]",
 };
 
 interface CommonProps {

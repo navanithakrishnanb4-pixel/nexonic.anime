@@ -1,33 +1,28 @@
 import Link from "next/link";
-import { Icon } from "@/components/ui/Icon";
 
 interface AdminStatCardProps {
   label: string;
   count: number;
   href: string;
-  icon: string;
+  sub?: string;
+  /** Tailwind text-color utility for the number, matching the Figma per-metric color coding. */
+  accentClass?: string;
 }
 
 /**
- * Renders whatever count it's given — currently always 0 across the
- * dashboard, because that's the real state, not a placeholder. Links
- * through to the relevant admin list page.
+ * Renders whatever count it's given — real, same as before the
+ * redesign. `sub` is optional context text, only passed when the
+ * caller has a real, cheaply-derivable value; never a fabricated detail.
  */
-export function AdminStatCard({ label, count, href, icon }: AdminStatCardProps) {
+export function AdminStatCard({ label, count, href, sub, accentClass = "text-paper-50" }: AdminStatCardProps) {
   return (
     <Link
       href={href}
-      className="flex flex-col gap-sm p-md rounded-xl border border-surface-container bg-surface-container-lowest hover:border-outline-variant transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+      className="block rounded-2xl p-5 bg-ink-800/50 border border-white/5 hover:border-white/15 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neon-violet"
     >
-      <div className="flex items-center justify-between">
-        <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
-          {label}
-        </span>
-        <Icon name={icon} className="text-on-surface-variant" size={20} />
-      </div>
-      <span className="font-display-hero-mobile text-headline-lg-mobile text-on-surface">
-        {count}
-      </span>
+      <p className={`font-display text-3xl font-light mb-1 ${accentClass}`}>{count}</p>
+      <p className="font-outfit text-paper-200 text-sm font-medium">{label}</p>
+      {sub && <p className="font-outfit text-paper-500 text-xs mt-0.5">{sub}</p>}
     </Link>
   );
 }

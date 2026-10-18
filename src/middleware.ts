@@ -1,0 +1,19 @@
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
+
+export async function middleware(request: NextRequest) {
+  return updateSession(request);
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Run on everything except static assets and Next internals, so the
+     * session cookie stays fresh across the whole site (public pages
+     * included — a visitor browsing anonymously has no session to
+     * refresh, this is a cheap no-op for them). The actual /admin
+     * redirect logic inside updateSession() only acts on /admin paths.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};

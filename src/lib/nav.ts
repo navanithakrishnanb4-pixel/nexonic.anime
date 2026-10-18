@@ -8,13 +8,15 @@ export interface NavItem {
   label: string;
   href: string;
   icon: string; // Material Symbols name
+  /** One-line descriptor shown on the nav drawer's card tiles. */
+  description?: string;
 }
 
 export const primaryNav: NavItem[] = [
-  { label: "Home", href: "/", icon: "home" },
-  { label: "Works", href: "/works", icon: "grid_view" },
-  { label: "Journal", href: "/journal", icon: "article" },
-  { label: "Studio", href: "/studio", icon: "info" },
+  { label: "Home", href: "/", icon: "home", description: "Latest from the studio" },
+  { label: "Works", href: "/works", icon: "grid_view", description: "Browse the full catalog" },
+  { label: "Journal", href: "/journal", icon: "article", description: "Notes on production" },
+  { label: "Studio", href: "/studio", icon: "info", description: "About Nexonic" },
 ];
 
 export const footerLegalLinks: NavItem[] = [

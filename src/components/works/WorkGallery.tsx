@@ -4,38 +4,43 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { staggerChildren, fadeInUp } from "@/lib/motion";
+import type { WorkGalleryImage } from "@/lib/types";
 
 interface WorkGalleryProps {
-  images: string[];
+  images: WorkGalleryImage[];
   workTitle: string;
 }
 
 export function WorkGallery({ images, workTitle }: WorkGalleryProps) {
   if (images.length === 0) return null;
 
+  const sorted = [...images].sort((a, b) => a.position - b.position);
+
   return (
-    <ScrollReveal className="px-margin-mobile md:px-margin-desktop py-lg">
-      <h2 className="font-headline-md text-headline-md text-on-surface mb-md">Gallery</h2>
+    <ScrollReveal className="mb-12">
+      <h2 className="font-display text-xl font-semibold text-paper-50 mb-4">Gallery</h2>
       <motion.div
-        className="grid grid-cols-2 md:grid-cols-3 gap-sm"
+        className="grid grid-cols-2 md:grid-cols-3 gap-3"
         variants={staggerChildren(0.06)}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-80px" }}
       >
-        {images.map((src, i) => (
+        {sorted.map((image, i) => (
           <motion.div
-            key={src}
+            key={image.mediaId ?? image.url ?? i}
             variants={fadeInUp}
-            className="relative aspect-video rounded-lg overflow-hidden border border-outline-variant/30 bg-surface-container-low"
+            className="relative aspect-video rounded-xl overflow-hidden bg-ink-800 border border-white/5"
           >
-            <Image
-              src={src}
-              alt={`${workTitle} concept art ${i + 1}`}
-              fill
-              sizes="(max-width: 768px) 45vw, 30vw"
-              className="object-cover"
-            />
+            {image.url ? (
+              <Image
+                src={image.url}
+                alt={image.alt || `${workTitle} concept art`}
+                fill
+                sizes="(max-width: 768px) 45vw, 30vw"
+                className="object-cover"
+              />
+            ) : null}
           </motion.div>
         ))}
       </motion.div>

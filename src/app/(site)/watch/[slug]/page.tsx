@@ -7,6 +7,8 @@ interface WatchDetailPageProps {
   params: { slug: string };
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: WatchDetailPageProps): Promise<Metadata> {
@@ -25,17 +27,19 @@ export default async function WatchDetailPage({ params }: WatchDetailPageProps) 
   const { work, seasons } = result;
 
   return (
-    <div className="px-margin-mobile md:px-margin-desktop py-xl flex flex-col gap-lg">
-      <header className="max-w-2xl flex flex-col gap-xs">
-        <h1 className="font-display-hero-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">
-          {work.title}
-        </h1>
-        <p className="font-body-md text-body-md text-on-surface-variant">
-          {work.shortDescription}
-        </p>
-      </header>
+    <div className="min-h-screen bg-ink-900">
+      <div className="max-w-[1440px] mx-auto px-6 py-10">
+        <header className="max-w-2xl mb-8">
+          <h1 className="font-display italic text-paper-50 text-3xl md:text-4xl font-light mb-2">
+            {work.title}
+          </h1>
+          {work.shortDescription && (
+            <p className="font-outfit text-paper-400 text-sm">{work.shortDescription}</p>
+          )}
+        </header>
 
-      <WatchSeriesClient work={work} seasons={seasons} />
+        <WatchSeriesClient work={work} seasons={seasons} />
+      </div>
     </div>
   );
 }

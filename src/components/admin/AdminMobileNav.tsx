@@ -1,27 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "@/components/ui/Icon";
 import { adminNav } from "@/lib/admin-nav";
 import { DURATION } from "@/lib/motion";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
 export function AdminMobileNav() {
   const [open, setOpen] = useState(false);
 
+  // Escape closes the drawer; page scroll is locked while it is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
   return (
     <div className="md:hidden">
-      <header className="h-16 flex items-center justify-between px-margin-mobile border-b border-surface-container bg-surface-container-lowest sticky top-0 z-40">
-        <Link href="/admin" className="font-headline-md text-headline-md font-bold text-on-surface">
-          NEXONIC <span className="text-caption text-on-surface-variant">Admin</span>
+      <header className="h-16 flex items-center justify-between px-5 border-b border-white/5 bg-ink-950 sticky top-0 z-40">
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shrink-0">
+            <span className="font-display font-bold text-white text-xs leading-none">N</span>
+          </div>
+          <span className="font-display font-semibold text-paper-50 text-sm tracking-wide uppercase">
+            Admin
+          </span>
         </Link>
         <button
           type="button"
           aria-label="Open admin menu"
           aria-expanded={open}
           onClick={() => setOpen(true)}
-          className="p-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+          className="p-2 rounded-full text-paper-400 hover:text-paper-100 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neon-violet"
         >
           <Icon name="menu" />
         </button>
@@ -30,32 +51,33 @@ export function AdminMobileNav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-50 bg-surface/98 backdrop-blur-lg flex flex-col"
+            role="dialog" aria-modal="true" aria-label="Admin menu"
+            className="fixed inset-0 z-50 bg-ink-950/98 backdrop-blur-lg flex flex-col"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.standard }}
           >
-            <div className="h-16 flex items-center justify-between px-margin-mobile">
-              <span className="font-headline-md text-headline-md font-bold text-on-surface">
+            <div className="h-16 flex items-center justify-between px-5">
+              <span className="font-display font-semibold text-paper-50 text-sm tracking-wide uppercase">
                 Admin
               </span>
               <button
                 type="button"
                 aria-label="Close admin menu"
                 onClick={() => setOpen(false)}
-                className="p-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                className="p-2 rounded-full text-paper-400 hover:text-paper-100 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neon-violet"
               >
                 <Icon name="close" />
               </button>
             </div>
-            <nav className="flex flex-col gap-xs px-margin-mobile" aria-label="Admin navigation">
+            <nav className="font-outfit flex flex-col gap-1 px-5" aria-label="Admin navigation">
               {adminNav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-sm py-sm font-body-lg text-body-lg text-on-surface"
+                  className="flex items-center gap-3 py-3 text-base text-paper-200"
                 >
                   <Icon name={item.icon} />
                   {item.label}
@@ -64,11 +86,12 @@ export function AdminMobileNav() {
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-sm py-sm mt-sm border-t border-surface-container font-body-lg text-body-lg text-on-surface-variant"
+                className="flex items-center gap-3 py-3 mt-2 border-t border-white/5 text-base text-paper-500"
               >
                 <Icon name="arrow_back" />
                 View site
               </Link>
+              <LogoutButton className="!text-paper-500 py-3 text-base" />
             </nav>
           </motion.div>
         )}

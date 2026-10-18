@@ -1,23 +1,22 @@
-import { EmptyState } from "@/components/ui/EmptyState";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 /**
- * Rendered automatically by Next.js when `notFound()` is called inside
- * app/works/[slug]/page.tsx — covers both "slug doesn't exist" and
- * (right now) "zero works exist at all." Reuses EmptyState rather than
- * a bespoke 404 layout, and never fabricates a work to fill the page.
+ * Rendered by Next.js when notFound() is called inside
+ * app/(site)/works/[slug]/page.tsx. Scoped to this one route, so
+ * restyling it doesn't affect any other not-yet-ported page.
  */
 export default function WorkNotFound() {
   return (
-    <div className="px-margin-mobile md:px-margin-desktop py-xl flex flex-col items-center gap-lg min-h-[50vh] justify-center">
-      <EmptyState
-        icon="search_off"
-        message="We couldn't find that work. It may not be published yet, or the link may be out of date."
-        className="max-w-md"
-      />
-      <Button href="/works" variant="secondary">
-        Back to Works
-      </Button>
+    <div className="min-h-[70vh] bg-ink-900 flex items-center justify-center px-6">
+      <div className="text-center">
+        <h1 className="font-display italic text-paper-50 text-4xl mb-4">Series Not Found</h1>
+        <p className="font-outfit text-paper-500 text-sm mb-6">
+          It may not be published yet, or the link may be out of date.
+        </p>
+        <Link href="/works" className="font-outfit text-neon-violet-soft hover:text-neon-pink transition-colors text-sm font-medium">
+          ← Back to Works
+        </Link>
+      </div>
     </div>
   );
 }

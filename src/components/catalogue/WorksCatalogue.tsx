@@ -1,78 +1,87 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { CatalogueControls } from "@/components/catalogue/CatalogueControls";
-import { WorkCard } from "@/components/cards/WorkCard";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { ScrollReveal } from "@/components/motion/ScrollReveal";
-import { staggerChildren, fadeInUp } from "@/lib/motion";
-import { workCategoryFilters, workSortOptions } from "@/lib/works-data";
-import type { Work } from "@/lib/types";
+import { WorksFilterBar } from "@/components/catalogue/WorksFilterBar";
+import { WorksGridCard } from "@/components/works/WorksGridCard";
+import type { Work, WorkStatus } from "@/lib/types";
 
 interface WorksCatalogueProps {
   works: Work[];
 }
 
+function SearchOffIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-ink-400">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  );
+}
+
 /**
- * Grid + controls for /works. Not built on ContentShelf — ContentShelf
- * bakes in a shelf heading and "view all" link meant for a homepage
- * row; this page needs a page-level heading, a description, and filter
- * controls above a full grid instead. Reuses WorkCard and EmptyState
- * directly rather than duplicating their markup.
- *
- * Client component only because the filter/sort controls need local
- * state. `works` itself is fetched server-side in app/works/page.tsx
- * and passed in as a prop.
+ * `works` is fetched server-side in app/(site)/works/page.tsx and
+ * passed in as a plain prop, same as before the redesign — only the
+ * presentation changed. Filtering/search/sort are real, run against
+ * the real array; with zero Works published this just means an empty
+ * result set, not fake behavior.
  */
 export function WorksCatalogue({ works }: WorksCatalogueProps) {
-  const [category, setCategory] = useState("all");
+  const [search, setSearch] = useState("");
+  const [genre, setGenre] = useState("All");
+  const [status, setStatus] = useState<WorkStatus | "all">("all");
   const [sort, setSort] = useState("latest");
 
-  // Filtering/sorting logic is here and does run — it's just a no-op
-  // against an empty array right now. This is the real behavior that
-  // will apply the moment `works` is non-empty; nothing to rewrite later.
-  const filtered =
-    category === "all" ? works : works.filter((w) => w.category === category);
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === "az") return a.title.localeCompare(b.title);
-    // "latest": fall back to publishedAt, most recent first
-    return (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
-  });
+  const filtered = works
+    .filter((w) => genre === "All" || w.genres.includes(genre))
+    .filter((w) => status === "all" || w.status === status)
+    .filter((w) => !search || w.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort === "az") return a.title.localeCompare(b.title);
+      return (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
+    });
 
   return (
-    <div className="flex flex-col gap-lg">
-      <ScrollReveal>
-        <CatalogueControls
-          categories={workCategoryFilters}
-          activeCategory={category}
-          onCategoryChange={setCategory}
-          sortOptions={workSortOptions}
-          activeSort={sort}
-          onSortChange={setSort}
-        />
-      </ScrollReveal>
+    <>
+      <WorksFilterBar
+        works={works}
+        search={search}
+        onSearchChange={setSearch}
+        genre={genre}
+        onGenreChange={setGenre}
+        status={status}
+        onStatusChange={setStatus}
+        sort={sort}
+        onSortChange={setSort}
+      />
 
-      {sorted.length === 0 ? (
-        <EmptyState
-          icon="movie"
-          message="Nexonic has no published works yet. Our first projects are currently in development."
-        />
-      ) : (
-        <motion.div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-md"
-          variants={staggerChildren(0.06)}
-          initial="hidden"
-          animate="visible"
-        >
-          {sorted.map((work) => (
-            <motion.div key={work.id} variants={fadeInUp}>
-              <WorkCard work={work} />
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
-    </div>
+      <div className="max-w-[1440px] mx-auto px-6 py-12">
+        {filtered.length === 0 ? (
+          <div className="py-28 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-paper-200 border border-paper-300 flex items-center justify-center mx-auto mb-5">
+              <SearchOffIcon />
+            </div>
+            <p className="font-display italic text-ink-600 text-xl mb-1">
+              {works.length === 0 ? "No series published yet" : "No series found"}
+            </p>
+            <p className="font-outfit text-ink-400 text-sm">
+              {works.length === 0
+                ? "Nexonic's first projects are currently in development."
+                : "Try adjusting your filters."}
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="font-outfit text-ink-400 text-xs mb-7">
+              {filtered.length} {filtered.length === 1 ? "series" : "series"}
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-5 gap-y-8">
+              {filtered.map((work) => (
+                <WorksGridCard key={work.id} work={work} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }

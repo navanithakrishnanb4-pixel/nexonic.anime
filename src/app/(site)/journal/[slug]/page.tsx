@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getJournalPostBySlug, getRelatedJournalPosts } from "@/lib/journal-data";
-import { JournalArticleHeader } from "@/components/journal/JournalArticleHeader";
+import { JournalArticleHero } from "@/components/journal/JournalArticleHero";
 import { JournalArticleBody } from "@/components/journal/JournalArticleBody";
 import { RelatedJournalPosts } from "@/components/journal/RelatedJournalPosts";
 
 interface JournalArticlePageProps {
   params: { slug: string };
 }
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -27,9 +29,9 @@ export default async function JournalArticlePage({ params }: JournalArticlePageP
   const related = await getRelatedJournalPosts(post.slug);
 
   return (
-    <article className="py-xl flex flex-col gap-xl">
-      <JournalArticleHeader post={post} />
-      <JournalArticleBody content={post.content} />
+    <article>
+      <JournalArticleHero post={post} />
+      <JournalArticleBody post={post} />
       <RelatedJournalPosts posts={related} />
     </article>
   );

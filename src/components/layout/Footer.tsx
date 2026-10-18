@@ -1,46 +1,88 @@
 import Link from "next/link";
-import { footerCompanyLinks, footerLegalLinks } from "@/lib/nav";
+import { footerLegalLinks } from "@/lib/nav";
+
+/**
+ * Figma footer layout with real content only. Differences from the
+ * reference, on purpose:
+ * - Link columns list only routes that exist (Works, Watch, Search,
+ *   Studio, Journal). The reference's "New Releases", "Coming Soon",
+ *   "Our Process", "Careers", "Press Kit" pointed at filters/anchors/
+ *   pages that don't exist here.
+ * - Brand blurb reuses the site's own existing description instead of
+ *   the reference's "streaming platform... worldwide" claim.
+ * - Legal links still come from lib/nav.ts. /privacy and /terms are
+ *   not built yet, so they 404 until those pages exist — unchanged
+ *   from before the redesign.
+ */
+const LINK_COLUMNS: { heading: string; items: { label: string; href: string }[] }[] = [
+  {
+    heading: "Platform",
+    items: [
+      { label: "Browse Works", href: "/works" },
+      { label: "Watch", href: "/watch" },
+      { label: "Search", href: "/search" },
+    ],
+  },
+  {
+    heading: "Studio",
+    items: [
+      { label: "About Nexonic", href: "/studio" },
+      { label: "Journal", href: "/journal" },
+    ],
+  },
+  {
+    heading: "Legal",
+    items: footerLegalLinks.map((l) => ({ label: l.label, href: l.href })),
+  },
+];
 
 export function Footer() {
   return (
-    <footer className="bg-surface-container-lowest border-t border-white/5 w-full py-xl px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-xl">
-      <div className="col-span-1 md:col-span-2 flex flex-col gap-sm">
-        <span className="text-headline-md font-headline-md font-bold text-on-surface">
-          NEXONIC
-        </span>
-        <p className="font-body-md text-body-md text-on-surface-variant mt-sm">
-          © {new Date().getFullYear()} NEXONIC Animation Studio. All rights reserved.
-        </p>
-      </div>
+    <footer className="bg-ink-950 border-t border-white/5 w-full">
+      <div className="h-px bg-gradient-to-r from-neon-violet/40 via-neon-pink/40 to-neon-cyan/40" />
 
-      <div className="col-span-1 flex flex-col gap-sm">
-        <h3 className="font-label-md text-label-md text-on-surface font-semibold mb-xs">
-          Legal
-        </h3>
-        {footerLegalLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
+      <div className="max-w-[1440px] mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shadow-lg shadow-neon-violet/25">
+                <span className="font-display font-bold text-white text-base leading-none">N</span>
+              </div>
+              <span className="font-display font-semibold text-paper-50 tracking-widest uppercase text-base">
+                Nexonic
+              </span>
+            </div>
+            <p className="font-outfit text-paper-500 text-sm leading-relaxed max-w-xs">
+              An independent animation studio building original stories and technology.
+            </p>
+          </div>
 
-      <div className="col-span-1 flex flex-col gap-sm">
-        <h3 className="font-label-md text-label-md text-on-surface font-semibold mb-xs">
-          Company
-        </h3>
-        {footerCompanyLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
-          >
-            {link.label}
-          </Link>
-        ))}
+          {LINK_COLUMNS.map((col) => (
+            <div key={col.heading}>
+              <h3 className="font-outfit text-paper-50 text-xs font-semibold tracking-widest uppercase mb-4">
+                {col.heading}
+              </h3>
+              <ul className="space-y-2.5">
+                {col.items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="font-outfit text-paper-500 text-sm hover:text-paper-200 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-white/5">
+          <p className="font-outfit text-paper-500 text-xs">
+            © {new Date().getFullYear()} NEXONIC Animation Studio. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );

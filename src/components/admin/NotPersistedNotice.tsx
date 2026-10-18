@@ -1,18 +1,19 @@
 import { Icon } from "@/components/ui/Icon";
 
 /**
- * Every create/edit form in this admin shell renders this. There is no
- * backend yet (Supabase is a later phase), so nothing here actually
- * saves — this banner says so explicitly rather than letting a "Save"
- * button imply persistence that doesn't exist.
+ * Only used by SettingsForm now — Works/Episodes/Journal/Announcements
+ * forms were wired to real Server Actions in later steps and no longer
+ * render this. Settings itself is still intentionally UI-only (per the
+ * 18L brief: no schema change just to make Settings "work"), so this
+ * copy is still accurate for that one remaining context.
  */
 export function NotPersistedNotice() {
   return (
-    <div className="flex items-start gap-sm rounded-lg border border-outline-variant/50 bg-surface-container-low px-md py-sm">
-      <Icon name="info" className="text-on-surface-variant mt-[2px]" size={18} />
-      <p className="font-caption text-caption text-on-surface-variant">
+    <div className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-ink-800/60 px-4 py-3">
+      <Icon name="info" className="text-paper-500 mt-[2px]" size={18} />
+      <p className="font-outfit text-xs text-paper-500">
         This form is not yet connected to a backend. Fields are functional UI
-        only — nothing is saved until Supabase is integrated in a later phase.
+        only — nothing is saved until Supabase is integrated for Settings.
       </p>
     </div>
   );

@@ -65,3 +65,24 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Figma redesign utilities (additive) ---
+   Used by pages ported to the new visual design (starting with
+   /works). Already covered by the prefers-reduced-motion override
+   above — no separate reduced-motion handling needed here. */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.shelf-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.shelf-scroll::-webkit-scrollbar {
+  display: none;
+}

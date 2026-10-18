@@ -9,18 +9,22 @@ import { ScrollReveal } from "@/components/motion/ScrollReveal";
  */
 export function StudioSection() {
   return (
-    <ScrollReveal className="px-margin-mobile md:px-margin-desktop py-xl border-t border-surface-container">
-      <div className="max-w-2xl flex flex-col gap-sm">
-        <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">
+    <ScrollReveal className="px-6 py-16 border-t border-white/5 bg-ink-900">
+      <div className="max-w-2xl mx-auto flex flex-col gap-sm text-center items-center">
+        <h2 className="font-display italic text-3xl font-light text-paper-50">
           Independent by design.
         </h2>
-        <p className="font-body-lg text-body-lg text-on-surface-variant">
+        <p className="font-outfit text-paper-300 text-sm leading-relaxed max-w-lg">
           NEXONIC is a small, self-funded animation studio. We build original
           worlds from the ground up — no franchises, no adaptations. Every
           project is developed in-house, start to finish.
         </p>
         <div className="pt-sm">
-          <Button href="/studio" variant="secondary">
+          <Button
+            href="/studio"
+            variant="secondary"
+            className="!border-white/25 !text-paper-100 hover:!bg-white/8 hover:!border-white/40 !rounded-full"
+          >
             About the Studio
           </Button>
         </div>

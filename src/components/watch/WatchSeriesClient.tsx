@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { EpisodeRow } from "@/components/watch/EpisodeRow";
 import { VideoPlayer } from "@/components/watch/VideoPlayer";
-import { EmptyState } from "@/components/ui/EmptyState";
 import type { SeasonGroup } from "@/lib/watch-data";
 import type { Work } from "@/lib/types";
 
@@ -12,11 +11,6 @@ interface WatchSeriesClientProps {
   seasons: SeasonGroup[];
 }
 
-/**
- * Client-side because episode selection is local UI state. Seasons/
- * episodes are fetched server-side (app/watch/[slug]/page.tsx) and
- * passed in as props — this component just presents them.
- */
 export function WatchSeriesClient({ work, seasons }: WatchSeriesClientProps) {
   const allEpisodes = seasons.flatMap((s) => s.episodes);
   const [selectedId, setSelectedId] = useState(allEpisodes[0]?.id ?? null);
@@ -24,24 +18,23 @@ export function WatchSeriesClient({ work, seasons }: WatchSeriesClientProps) {
 
   if (allEpisodes.length === 0) {
     return (
-      <EmptyState
-        icon="movie"
-        message={`No episodes of ${work.title} are available to watch yet.`}
-      />
+      <div className="py-20 text-center rounded-2xl bg-ink-800/40 border border-white/5">
+        <p className="font-display italic text-paper-400 text-xl mb-2">No episodes yet</p>
+        <p className="font-outfit text-paper-500 text-sm">
+          {work.title} is currently in production.
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-lg items-start">
-      <VideoPlayer
-        videoUrl={selected?.videoUrl ?? null}
-        title={selected?.title ?? work.title}
-      />
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
+      <VideoPlayer videoUrl={selected?.videoUrl ?? null} title={selected?.title ?? work.title} />
 
-      <div className="flex flex-col gap-md max-h-[70vh] lg:overflow-y-auto">
+      <div className="flex flex-col gap-4 max-h-[70vh] lg:overflow-y-auto shelf-scroll">
         {seasons.map((season) => (
-          <div key={season.seasonNumber} className="flex flex-col gap-xs">
-            <h2 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest px-sm">
+          <div key={season.seasonNumber} className="flex flex-col gap-1">
+            <h2 className="font-outfit text-paper-500 text-[11px] uppercase tracking-widest px-2 mb-1">
               Season {season.seasonNumber}
             </h2>
             {season.episodes.map((episode) => (

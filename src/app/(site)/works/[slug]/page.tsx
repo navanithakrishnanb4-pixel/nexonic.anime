@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getWorkBySlug } from "@/lib/works-data";
+import { getAllWorks, getWorkBySlug } from "@/lib/works-data";
+import { getEpisodeCountForWork } from "@/lib/episodes-data";
 import { WorkDetailHero } from "@/components/works/WorkDetailHero";
+import { WorkSidebar } from "@/components/works/WorkSidebar";
+import { WorkEpisodesTeaser } from "@/components/works/WorkEpisodesTeaser";
 import { WorkGallery } from "@/components/works/WorkGallery";
 import { WorkCredits } from "@/components/works/WorkCredits";
+import { RelatedWorks } from "@/components/works/RelatedWorks";
 
 interface WorkDetailPageProps {
   params: { slug: string };
 }
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -21,12 +27,13 @@ export async function generateMetadata({
 }
 
 /**
- * /works/[slug]. Calls next/navigation's notFound() — not a manual
- * "if null render EmptyState" branch — so a bad slug gets a real 404
- * status code and the shared not-found.tsx in this same route segment,
- * instead of a 200 response with an empty-looking page. With zero
- * works currently published, every slug hits this path; that's
- * expected, not a bug to work around.
+ * Third page ported to the Figma visual design. Adds two real queries
+ * the old version didn't need: an episode count (episodes-data.ts's
+ * getEpisodeCountForWork) and a related-works lookup (genre overlap
+ * against getAllWorks() — not a separate "related" table or fabricated
+ * list). With the current empty database both resolve to 0 / [], which
+ * their components already render honestly (no episodes yet / no
+ * related-works section at all).
  */
 export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   const work = await getWorkBySlug(params.slug);
@@ -35,11 +42,39 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
+  const [episodeCount, allWorks] = await Promise.all([
+    getEpisodeCountForWork(work.id),
+    getAllWorks(),
+  ]);
+
+  const related = allWorks
+    .filter((w) => w.id !== work.id && w.genres.some((g) => work.genres.includes(g)))
+    .slice(0, 6);
+
   return (
-    <div className="flex flex-col">
+    <div className="bg-ink-900">
       <WorkDetailHero work={work} />
-      <WorkGallery images={work.galleryImageUrls} workTitle={work.title} />
-      <WorkCredits credits={work.credits} />
+
+      <div className="max-w-[1440px] mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-[1fr_320px] gap-12">
+          <div>
+            <section className="mb-12">
+              <h2 className="font-display text-xl font-semibold text-paper-50 mb-4">Synopsis</h2>
+              <p className="font-outfit text-paper-300 text-base leading-relaxed">
+                {work.description || work.shortDescription}
+              </p>
+            </section>
+
+            <WorkEpisodesTeaser workSlug={work.slug} episodeCount={episodeCount} />
+          </div>
+
+          <WorkSidebar work={work} />
+        </div>
+
+        <WorkGallery images={work.gallery} workTitle={work.title} />
+        <WorkCredits credits={work.credits} />
+        <RelatedWorks works={related} />
+      </div>
     </div>
   );
 }

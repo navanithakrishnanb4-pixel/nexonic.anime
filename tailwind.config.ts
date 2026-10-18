@@ -9,6 +9,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // --- Figma redesign tokens (additive) ---
+        // Ported verbatim from the approved Figma prototype's @theme
+        // block. Existing tokens below (on-surface/primary/etc) are
+        // untouched — pages not yet ported keep using them. Both sets
+        // coexist until every page has been redone.
+        "ink-950": "#060C18",
+        "ink-900": "#0B1628",
+        "ink-800": "#0F1E35",
+        "ink-750": "#132342",
+        "ink-700": "#162B4F",
+        "ink-600": "#1E3558",
+        "ink-500": "#2A4670",
+        "ink-400": "#3D5E8A",
+        "paper-50": "#FDFCFB",
+        "paper-100": "#F8F5F0",
+        "paper-200": "#EDE8E2",
+        "paper-300": "#D9D3CB",
+        "paper-400": "#BFB8AF",
+        "paper-500": "#9E968C",
+        "paper-600": "#7A7269",
+        "neon-violet": "#7C3AED",
+        // Accessible variants (contrast-checked): soft = violet text on dark (>=6:1),
+        // pink-deep = gradient end behind white button text (>=4.7:1).
+        "neon-violet-soft": "#A78BFA",
+        "neon-pink-deep": "#C2457E",
+        "neon-purple": "#9333EA",
+        "neon-pink": "#E879A0",
+        "neon-fuchsia": "#D946EF",
+        "neon-blue": "#3B82F6",
+        "neon-sky": "#0EA5E9",
+        "neon-cyan": "#22D3EE",
+
         "on-surface-variant": "#c9c4d7",
         "on-primary": "#30009a",
         "on-primary-container": "#d8ceff",
@@ -75,6 +107,9 @@ const config: Config = {
         "margin-desktop": "64px",
       },
       fontFamily: {
+        // --- Figma redesign fonts (additive) ---
+        display: ["Fraunces", "Georgia", "serif"],
+        outfit: ["Outfit", "system-ui", "sans-serif"],
         "headline-lg-mobile": ["Inter", "sans-serif"],
         "body-md": ["Inter", "sans-serif"],
         "headline-lg": ["Inter", "sans-serif"],

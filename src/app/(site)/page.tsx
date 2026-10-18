@@ -1,8 +1,8 @@
 import { Hero } from "@/components/sections/Hero";
 import { StudioSection } from "@/components/sections/StudioSection";
-import { ContentShelf } from "@/components/shelves/ContentShelf";
-import { WorkCard } from "@/components/cards/WorkCard";
-import { JournalCard } from "@/components/cards/JournalCard";
+import { FigmaShelf } from "@/components/shelves/FigmaShelf";
+import { HomeWorkCard } from "@/components/works/HomeWorkCard";
+import { HomeJournalCard } from "@/components/journal/HomeJournalCard";
 import {
   getFeaturedJournalPosts,
   getFeaturedWorks,
@@ -10,12 +10,19 @@ import {
 } from "@/lib/homepage-data";
 
 /**
- * Canonical NEXONIC homepage (Step 8). Server component: fetches its
- * three content pieces (hero, works, journal) from the data seam in
- * lib/homepage-data.ts, all of which currently resolve to empty/default
- * values. Nothing here special-cases "0 items" — ContentShelf already
- * renders EmptyState automatically, so this page works identically
- * once real content exists later, no changes needed here for that.
+ * Second page ported to the Figma visual design (after /works).
+ *
+ * SCOPING NOTE: the Figma reference's Home has five shelves (Trending,
+ * Latest Episodes, an Upcoming spotlight, Popular, Recently Added).
+ * Those depend on data axes that don't exist in the real schema —
+ * trending/popularity ranking, episode air-dates, an "upcoming"
+ * concept distinct from work status. Faking that categorization with
+ * the same handful of (currently zero) real Works repeated under five
+ * headings would be decorative clutter with no real function. This
+ * page keeps exactly the two shelves with real backing data — Works
+ * (featured) and Journal (featured) — restyled, plus Hero and the
+ * Studio teaser. If trending/popularity tracking gets built later,
+ * shelves like that become a real addition instead of a cosmetic one.
  */
 export default async function HomePage() {
   const [hero, works, journalPosts] = await Promise.all([
@@ -25,28 +32,44 @@ export default async function HomePage() {
   ]);
 
   return (
-    <>
+    <div className="bg-ink-900">
       <Hero content={hero} />
 
-      <ContentShelf
-        title="Works"
-        items={works}
-        renderItem={(work) => <WorkCard work={work} />}
-        emptyIcon="movie"
-        emptyMessage="Our first worlds are still being built."
-        viewAllHref="/works"
-      />
+      <section className="py-14">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <FigmaShelf
+            title="Works"
+            eyebrow="From the Studio"
+            viewAllHref="/works"
+            isEmpty={works.length === 0}
+            emptyMessage="Our first worlds are still being built."
+          >
+            {works.map((work) => (
+              <HomeWorkCard key={work.id} work={work} />
+            ))}
+          </FigmaShelf>
+        </div>
+      </section>
 
-      <ContentShelf
-        title="Journal"
-        items={journalPosts}
-        renderItem={(post) => <JournalCard post={post} />}
-        emptyIcon="edit_note"
-        emptyMessage="The studio journal is coming soon."
-        viewAllHref="/journal"
-      />
+      <div className="h-px bg-white/5 mx-6" />
+
+      <section className="py-14">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <FigmaShelf
+            title="Journal"
+            eyebrow="Latest Writing"
+            viewAllHref="/journal"
+            isEmpty={journalPosts.length === 0}
+            emptyMessage="The studio journal is coming soon."
+          >
+            {journalPosts.map((post) => (
+              <HomeJournalCard key={post.id} post={post} />
+            ))}
+          </FigmaShelf>
+        </div>
+      </section>
 
       <StudioSection />
-    </>
+    </div>
   );
 }
