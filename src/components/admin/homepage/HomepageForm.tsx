@@ -19,13 +19,26 @@ interface HomepageFormProps {
 
 const initialState: HomepageFormState = { error: null };
 
+function Toggle({ name, defaultChecked, label }: { name: string; defaultChecked: boolean; label: string }) {
+  return (
+    <label className="flex items-center justify-between gap-4 cursor-pointer">
+      <span className="font-outfit text-sm text-paper-200">{label}</span>
+      <span className="relative inline-flex">
+        <input type="checkbox" name={name} defaultChecked={defaultChecked} className="peer sr-only" />
+        <span className="w-10 h-[22px] rounded-full bg-ink-600 transition-colors peer-checked:bg-neon-violet peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-neon-violet" />
+        <span className="absolute top-0.5 left-0.5 w-[18px] h-[18px] rounded-full bg-white transition-transform peer-checked:translate-x-[18px]" />
+      </span>
+    </label>
+  );
+}
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <button
       type="submit"
       disabled={pending}
-      className="rounded-full bg-neon-violet px-md py-sm font-outfit text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+      className="font-outfit rounded-xl bg-gradient-to-r from-neon-violet to-neon-pink-deep px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-50"
     >
       {pending ? "Saving…" : "Save Changes"}
     </button>
@@ -49,7 +62,7 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
   const [heroMediaId, setHeroMediaId] = useState<string | null>(config.heroMediaId);
 
   return (
-    <form action={formAction} className="flex flex-col gap-lg max-w-2xl">
+    <form action={formAction} className="flex flex-col gap-6 max-w-3xl">
       {state.error && (
         <div
           role="alert"
@@ -59,18 +72,10 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
         </div>
       )}
 
-      <div>
-        <h2 className="font-display text-xl font-semibold text-paper-100 mb-sm">Hero</h2>
+      <div className="admin-card rounded-2xl border border-white/5 p-6">
+        <h2 className="font-display text-lg font-semibold text-paper-50 mb-4">Hero</h2>
         <div className="flex flex-col gap-md">
-          <label className="flex items-center gap-sm font-outfit text-sm text-paper-100">
-            <input
-              type="checkbox"
-              name="heroVisible"
-              defaultChecked={config.heroVisible}
-              className="w-4 h-4 accent-neon-violet"
-            />
-            Show hero section
-          </label>
+          <Toggle name="heroVisible" defaultChecked={config.heroVisible} label="Show hero section" />
 
           <FormField label="Eyebrow" htmlFor="eyebrow">
             <TextInput id="eyebrow" name="eyebrow" defaultValue={config.heroEyebrow ?? ""} />
@@ -133,18 +138,10 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
         </div>
       </div>
 
-      <div className="border-t border-white/10 pt-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100 mb-sm">Featured Work</h2>
+      <div className="admin-card rounded-2xl border border-white/5 p-6">
+        <h2 className="font-display text-lg font-semibold text-paper-50 mb-4">Featured Work</h2>
         <div className="flex flex-col gap-md">
-          <label className="flex items-center gap-sm font-outfit text-sm text-paper-100">
-            <input
-              type="checkbox"
-              name="featuredWorkVisible"
-              defaultChecked={config.featuredWorkVisible}
-              className="w-4 h-4 accent-neon-violet"
-            />
-            Show on homepage
-          </label>
+          <Toggle name="featuredWorkVisible" defaultChecked={config.featuredWorkVisible} label="Show on homepage" />
           <FormField
             label="Work"
             htmlFor="featuredWorkId"
@@ -155,7 +152,7 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
               name="featuredWorkId"
               defaultValue={config.featuredWorkId ?? ""}
               disabled={works.length === 0}
-              className="w-full bg-ink-800 border border-white/10 rounded-lg px-sm py-sm font-outfit text-sm text-paper-100"
+              className="font-outfit w-full bg-ink-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-paper-100 outline-none focus:border-neon-violet/40"
             >
               <option value="">None</option>
               {works.map((w) => (
@@ -168,20 +165,12 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
         </div>
       </div>
 
-      <div className="border-t border-white/10 pt-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100 mb-sm">
+      <div className="admin-card rounded-2xl border border-white/5 p-6">
+        <h2 className="font-display text-lg font-semibold text-paper-50 mb-4">
           Featured Journal Post
         </h2>
         <div className="flex flex-col gap-md">
-          <label className="flex items-center gap-sm font-outfit text-sm text-paper-100">
-            <input
-              type="checkbox"
-              name="featuredJournalVisible"
-              defaultChecked={config.featuredJournalVisible}
-              className="w-4 h-4 accent-neon-violet"
-            />
-            Show on homepage
-          </label>
+          <Toggle name="featuredJournalVisible" defaultChecked={config.featuredJournalVisible} label="Show on homepage" />
           <FormField
             label="Journal post"
             htmlFor="featuredJournalId"
@@ -192,7 +181,7 @@ export function HomepageForm({ config, action, media, works, journalPosts }: Hom
               name="featuredJournalId"
               defaultValue={config.featuredJournalId ?? ""}
               disabled={journalPosts.length === 0}
-              className="w-full bg-ink-800 border border-white/10 rounded-lg px-sm py-sm font-outfit text-sm text-paper-100"
+              className="font-outfit w-full bg-ink-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-paper-100 outline-none focus:border-neon-violet/40"
             >
               <option value="">None</option>
               {journalPosts.map((p) => (

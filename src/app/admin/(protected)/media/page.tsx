@@ -1,7 +1,6 @@
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { AdminMediaLibrary } from "@/components/admin/media/AdminMediaLibrary";
 import { MediaUploadForm } from "@/components/admin/media/MediaUploadForm";
-import { MediaItemCard } from "@/components/admin/media/MediaItemCard";
 import { getAllMedia } from "@/lib/media-data";
 
 export const dynamic = "force-dynamic";
@@ -10,23 +9,20 @@ export default async function AdminMediaPage() {
   const media = await getAllMedia();
 
   return (
-    <div className="flex flex-col gap-lg">
-      <AdminPageHeader
-        title="Media Library"
-        description="Images used across the site: posters, hero artwork, thumbnails, gallery images, logos."
-      />
+    <div className="max-w-5xl">
+      <div className="mb-8">
+        <AdminPageHeader
+          title="Media Library"
+          description={`${media.length} ${media.length === 1 ? "asset" : "assets"} · posters, hero artwork, thumbnails, gallery images and logos`}
+        />
+      </div>
 
-      <MediaUploadForm />
+      <div className="admin-card rounded-2xl border border-white/5 p-6 mb-8">
+        <h2 className="font-display font-semibold text-paper-50 text-lg mb-4">Upload an image</h2>
+        <MediaUploadForm />
+      </div>
 
-      {media.length === 0 ? (
-        <EmptyState icon="perm_media" message="No media assets uploaded yet." />
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-md">
-          {media.map((asset) => (
-            <MediaItemCard key={asset.id} asset={asset} />
-          ))}
-        </div>
-      )}
+      <AdminMediaLibrary media={media} />
     </div>
   );
 }

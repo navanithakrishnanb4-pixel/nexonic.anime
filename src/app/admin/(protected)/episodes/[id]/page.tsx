@@ -1,4 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminBackLink } from "@/components/admin/ui/AdminBackLink";
 import { AdminEmptyList } from "@/components/admin/AdminEmptyList";
 import { EpisodeForm } from "@/components/admin/episodes/EpisodeForm";
 import { DeleteEpisodeButton } from "@/components/admin/episodes/DeleteEpisodeButton";
@@ -22,7 +23,7 @@ export default async function EditEpisodePage({ params }: EditEpisodePageProps) 
 
   if (!episode) {
     return (
-      <div className="flex flex-col gap-lg">
+      <div className="flex flex-col gap-6 max-w-3xl">
         <AdminPageHeader title="Edit Episode" />
         <AdminEmptyList
           icon="search_off"
@@ -37,7 +38,8 @@ export default async function EditEpisodePage({ params }: EditEpisodePageProps) 
   const boundUpdate = updateEpisodeAction.bind(null, episode.id);
 
   return (
-    <div className="flex flex-col gap-lg">
+    <div className="flex flex-col gap-6 max-w-3xl">
+      <AdminBackLink href="/admin/episodes" label="All episodes" />
       <AdminPageHeader
         title={`Edit: ${episode.title}`}
         action={
@@ -48,7 +50,9 @@ export default async function EditEpisodePage({ params }: EditEpisodePageProps) 
           />
         }
       />
-      <EpisodeForm episode={episode} action={boundUpdate} works={works} media={media} />
+      <div className="admin-card rounded-2xl border border-white/5 p-6 sm:p-8">
+        <EpisodeForm episode={episode} action={boundUpdate} works={works} media={media} />
+      </div>
     </div>
   );
 }

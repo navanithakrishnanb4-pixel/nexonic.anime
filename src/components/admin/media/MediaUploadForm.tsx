@@ -77,7 +77,7 @@ export function MediaUploadForm() {
   }
 
   return (
-    <form action={formAction} className="border border-dashed border-white/10 rounded-xl p-lg flex flex-col gap-md">
+    <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-sm">
         <label htmlFor="file" className="font-outfit text-sm text-paper-100">
           Image file

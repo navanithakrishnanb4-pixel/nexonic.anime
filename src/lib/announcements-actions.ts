@@ -82,3 +82,25 @@ export async function deleteAnnouncementAction(id: string): Promise<{ error: str
   revalidatePath("/");
   return { error: null };
 }
+
+/**
+ * Flip an announcement's `visible` flag without opening the edit form
+ * (the Figma admin's on/off switch). Same authorization story as the
+ * other actions here: enforced by RLS on public.announcements.
+ */
+export async function setAnnouncementVisibleAction(
+  id: string,
+  visible: boolean
+): Promise<{ error: string | null }> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("announcements").update({ visible }).eq("id", id);
+
+  if (error) {
+    console.error("[announcements-actions] setAnnouncementVisibleAction failed:", error.message);
+    return { error: "Could not change visibility. Please try again." };
+  }
+
+  revalidatePath("/admin/announcements");
+  revalidatePath("/");
+  return { error: null };
+}

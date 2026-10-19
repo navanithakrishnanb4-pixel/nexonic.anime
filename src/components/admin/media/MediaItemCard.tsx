@@ -1,120 +1,116 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { EditIcon, TrashIcon } from "@/components/admin/ui/AdminIcons";
+import { ConfirmModal } from "@/components/admin/ui/ConfirmModal";
+import { useDeleteConfirm } from "@/components/admin/ui/useDeleteConfirm";
 import { deleteMediaAction, updateMediaMetadataAction, type MediaActionState } from "@/lib/media-actions";
 import type { MediaAsset } from "@/lib/media-data";
 
-interface MediaItemCardProps {
-  asset: MediaAsset;
-}
-
 const initialState: MediaActionState = { error: null };
+
+function formatSize(bytes: number | null): string | null {
+  if (!bytes) return null;
+  return bytes > 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`;
+}
 
 function SaveButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="text-sm text-neon-violet-soft hover:underline disabled:opacity-50"
-    >
+    <button type="submit" disabled={pending} className="font-outfit text-xs font-semibold text-neon-violet-soft hover:underline disabled:opacity-50">
       {pending ? "Saving…" : "Save"}
     </button>
   );
 }
 
-export function MediaItemCard({ asset }: MediaItemCardProps) {
-  const router = useRouter();
+/**
+ * Media tile in the Figma admin style (square preview, filename, real
+ * metadata, edit/delete). Edit changes alt text and caption through the
+ * existing updateMediaMetadataAction; delete goes through the shared
+ * ConfirmModal and the existing deleteMediaAction, which removes both
+ * the database row and the Storage object.
+ */
+export function MediaItemCard({ asset }: { asset: MediaAsset }) {
   const [editing, setEditing] = useState(false);
-  const [isDeleting, startDeleteTransition] = useTransition();
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
+  const del = useDeleteConfirm<MediaAsset>(deleteMediaAction);
   const boundUpdate = updateMediaMetadataAction.bind(null, asset.id);
   const [updateState, updateFormAction] = useFormState(boundUpdate, initialState);
 
-  function handleDelete() {
-    const confirmed = window.confirm(
-      `Delete "${asset.fileName}"? This removes both the file and its record and cannot be undone.`
-    );
-    if (!confirmed) return;
-
-    startDeleteTransition(async () => {
-      const result = await deleteMediaAction(asset.id);
-      if (result.error) {
-        setDeleteError(result.error);
-        return;
-      }
-      router.refresh();
-    });
-  }
+  const meta = [
+    asset.category,
+    asset.width && asset.height ? `${asset.width}×${asset.height}` : null,
+    formatSize(asset.fileSize),
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <div className="flex flex-col gap-sm rounded-lg border border-white/10 overflow-hidden">
+    <div className="admin-card rounded-2xl border border-white/5 overflow-hidden flex flex-col">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={asset.url}
-        alt={asset.altText || asset.fileName}
-        className="w-full aspect-square object-cover bg-ink-800"
-      />
+      <img src={asset.url} alt={asset.altText || asset.fileName} className="w-full aspect-square object-cover bg-ink-700" />
 
-      <div className="flex flex-col gap-xs px-sm pb-sm">
+      <div className="flex flex-col gap-1 p-3">
         <span className="font-outfit text-sm text-paper-100 truncate" title={asset.fileName}>
           {asset.fileName}
         </span>
-        <span className="font-outfit text-xs text-paper-500 uppercase">
-          {asset.category}
-          {asset.width && asset.height ? ` · ${asset.width}×${asset.height}` : ""}
-        </span>
+        <span className="font-outfit text-[11px] text-paper-500 uppercase tracking-wide">{meta}</span>
 
         {editing ? (
-          <form action={updateFormAction} className="flex flex-col gap-xs mt-xs">
+          <form action={updateFormAction} className="flex flex-col gap-2 mt-2">
             <input
               name="altText"
               defaultValue={asset.altText ?? ""}
               placeholder="Alt text"
-              className="rounded-md border border-white/10 bg-ink-900 px-xs py-xs text-sm text-paper-100"
+              className="font-outfit bg-ink-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-paper-100 outline-none focus:border-neon-violet/40"
             />
             <input
               name="caption"
               defaultValue={asset.caption ?? ""}
               placeholder="Caption"
-              className="rounded-md border border-white/10 bg-ink-900 px-xs py-xs text-sm text-paper-100"
+              className="font-outfit bg-ink-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-paper-100 outline-none focus:border-neon-violet/40"
             />
-            {updateState.error && <p className="text-xs text-red-300">{updateState.error}</p>}
-            <div className="flex gap-sm items-center">
+            {updateState.error && <p className="font-outfit text-xs text-red-300">{updateState.error}</p>}
+            <div className="flex gap-3 items-center">
               <SaveButton />
-              <button
-                type="button"
-                onClick={() => setEditing(false)}
-                className="text-sm text-paper-500 hover:underline"
-              >
+              <button type="button" onClick={() => setEditing(false)} className="font-outfit text-xs text-paper-500 hover:underline">
                 Cancel
               </button>
             </div>
           </form>
         ) : (
-          <div className="flex items-center justify-between pt-xs">
+          <div className="flex items-center gap-1 pt-1 -ml-1.5">
             <button
               type="button"
+              title="Edit alt text and caption"
+              aria-label={`Edit details for ${asset.fileName}`}
               onClick={() => setEditing(true)}
-              className="text-sm text-paper-500 hover:underline"
+              className="p-1.5 text-paper-500 hover:text-neon-violet-soft rounded-lg hover:bg-neon-violet/10 transition-all"
             >
-              Edit
+              <EditIcon />
             </button>
             <button
               type="button"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="text-sm text-red-300 hover:underline disabled:opacity-50"
+              title="Delete"
+              aria-label={`Delete ${asset.fileName}`}
+              onClick={() => del.ask(asset)}
+              className="p-1.5 text-paper-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-all"
             >
-              {isDeleting ? "Deleting…" : "Delete"}
+              <TrashIcon />
             </button>
           </div>
         )}
-        {deleteError && <p className="text-xs text-red-300">{deleteError}</p>}
       </div>
+
+      <ConfirmModal
+        open={del.target !== null}
+        title="Delete media?"
+        message={`This removes both the file and its record for "${asset.fileName}" and cannot be undone. If a work, post or episode still uses it, deletion will be blocked.`}
+        pending={del.pending}
+        error={del.error}
+        onCancel={del.cancel}
+        onConfirm={del.confirm}
+      />
     </div>
   );
 }

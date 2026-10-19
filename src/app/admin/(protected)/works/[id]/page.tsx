@@ -1,4 +1,5 @@
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminBackLink } from "@/components/admin/ui/AdminBackLink";
 import { AdminEmptyList } from "@/components/admin/AdminEmptyList";
 import { WorkForm } from "@/components/admin/works/WorkForm";
 import { DeleteWorkButton } from "@/components/admin/works/DeleteWorkButton";
@@ -17,7 +18,7 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
 
   if (!work) {
     return (
-      <div className="flex flex-col gap-lg">
+      <div className="flex flex-col gap-6 max-w-3xl">
         <AdminPageHeader title="Edit Work" />
         <AdminEmptyList
           icon="search_off"
@@ -32,14 +33,17 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
   const boundUpdate = updateWorkAction.bind(null, work.id);
 
   return (
-    <div className="flex flex-col gap-lg">
+    <div className="flex flex-col gap-6 max-w-3xl">
+      <AdminBackLink href="/admin/works" label="All works" />
       <AdminPageHeader
         title={`Edit: ${work.title}`}
         action={
           <DeleteWorkButton workId={work.id} workTitle={work.title} redirectTo="/admin/works" />
         }
       />
-      <WorkForm work={work} action={boundUpdate} media={media} />
+      <div className="admin-card rounded-2xl border border-white/5 p-6 sm:p-8">
+        <WorkForm work={work} action={boundUpdate} media={media} />
+      </div>
     </div>
   );
 }

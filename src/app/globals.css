@@ -86,3 +86,8 @@ body {
 .shelf-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* Admin card surface, from the Figma admin reference (.admin-card). */
+.admin-card {
+  background: theme("colors.ink-800");
+}

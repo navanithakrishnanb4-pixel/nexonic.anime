@@ -1,5 +1,4 @@
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { AdminEmptyList } from "@/components/admin/AdminEmptyList";
 import { AnnouncementForm } from "@/components/admin/announcements/AnnouncementForm";
 import { AnnouncementRow } from "@/components/admin/announcements/AnnouncementRow";
 import { getAllAnnouncements } from "@/lib/announcements-data";
@@ -9,30 +8,27 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminAnnouncementsPage() {
   const announcements = await getAllAnnouncements();
+  const visibleCount = announcements.filter((a) => a.visible).length;
 
   return (
-    <div className="flex flex-col gap-lg">
-      <AdminPageHeader
-        title="Announcements"
-        description="Site-wide messages, optionally scheduled and linked."
-      />
-
-      <div className="flex flex-col gap-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100">New Announcement</h2>
-        <AnnouncementForm action={createAnnouncementAction} submitLabel="Create Announcement" />
+    <div className="max-w-3xl">
+      <div className="mb-8">
+        <AdminPageHeader title="Announcements" description={`${announcements.length} total · ${visibleCount} visible`} />
       </div>
 
-      <div className="border-t border-white/10 pt-lg flex flex-col gap-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100">All Announcements</h2>
+      <div className="space-y-3 mb-10">
         {announcements.length === 0 ? (
-          <AdminEmptyList icon="campaign" message="No announcements yet." />
-        ) : (
-          <div className="flex flex-col gap-sm">
-            {announcements.map((a) => (
-              <AnnouncementRow key={a.id} announcement={a} />
-            ))}
+          <div className="admin-card rounded-2xl border border-white/5 py-12 text-center font-outfit text-paper-500 text-sm">
+            No announcements yet.
           </div>
+        ) : (
+          announcements.map((a) => <AnnouncementRow key={a.id} announcement={a} />)
         )}
+      </div>
+
+      <div className="admin-card rounded-2xl border border-white/5 p-6">
+        <h2 className="font-display font-semibold text-paper-50 text-lg mb-4">New announcement</h2>
+        <AnnouncementForm action={createAnnouncementAction} submitLabel="Create Announcement" />
       </div>
     </div>
   );

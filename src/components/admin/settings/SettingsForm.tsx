@@ -4,23 +4,38 @@ import { FormField, TextInput } from "@/components/admin/form/FormField";
 import { NotPersistedNotice } from "@/components/admin/NotPersistedNotice";
 import { Button } from "@/components/ui/Button";
 
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="admin-card rounded-2xl border border-white/5 p-6 flex flex-col gap-4">
+      <h2 className="font-display text-lg font-semibold text-paper-50">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Figma admin Settings layout (section cards). Still intentionally
+ * UI-only — there is no settings table, and the brief was not to add
+ * one just to make this page "work". Omitted from the Figma reference:
+ * its "Admin access" and IDE-waitlist sections (they describe features
+ * that don't exist here) and its pre-filled contact email/socials
+ * (invented values; these fields stay empty).
+ */
 export function SettingsForm() {
   return (
-    <form className="flex flex-col gap-lg max-w-2xl" onSubmit={(e) => e.preventDefault()}>
+    <form className="flex flex-col gap-6 max-w-3xl" onSubmit={(e) => e.preventDefault()}>
       <NotPersistedNotice />
 
-      <div className="flex flex-col gap-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100">General</h2>
+      <Card title="General">
         <FormField label="Site name" htmlFor="siteName">
           <TextInput id="siteName" name="siteName" defaultValue="NEXONIC" />
         </FormField>
         <FormField label="Contact email" htmlFor="contactEmail">
           <TextInput id="contactEmail" name="contactEmail" type="email" placeholder="not set" />
         </FormField>
-      </div>
+      </Card>
 
-      <div className="flex flex-col gap-md border-t border-white/10 pt-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100">Social links</h2>
+      <Card title="Social links">
         <FormField label="Twitter / X" htmlFor="twitter">
           <TextInput id="twitter" name="twitter" placeholder="not set" />
         </FormField>
@@ -30,10 +45,9 @@ export function SettingsForm() {
         <FormField label="YouTube" htmlFor="youtube">
           <TextInput id="youtube" name="youtube" placeholder="not set" />
         </FormField>
-      </div>
+      </Card>
 
-      <div className="flex flex-col gap-md border-t border-white/10 pt-md">
-        <h2 className="font-display text-xl font-semibold text-paper-100">SEO defaults</h2>
+      <Card title="SEO defaults">
         <FormField label="Default meta title" htmlFor="metaTitle">
           <TextInput id="metaTitle" name="metaTitle" defaultValue="NEXONIC Animation Studio" />
         </FormField>
@@ -44,10 +58,15 @@ export function SettingsForm() {
             defaultValue="NEXONIC is an independent animation studio building original stories and technology."
           />
         </FormField>
-      </div>
+      </Card>
 
-      <div className="pt-sm border-t border-white/10">
-        <Button type="submit" variant="primary" disabled className="!bg-gradient-to-r !from-neon-violet !to-neon-pink-deep !text-white !rounded-full hover:!opacity-90">
+      <div>
+        <Button
+          type="submit"
+          variant="primary"
+          disabled
+          className="!bg-gradient-to-r !from-neon-violet !to-neon-pink-deep !text-white !rounded-xl hover:!opacity-90"
+        >
           Save Settings
         </Button>
       </div>
