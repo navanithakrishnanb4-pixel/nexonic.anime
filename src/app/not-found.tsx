@@ -1,3 +1,4 @@
+import { LogoMark } from "@/components/brand/Logo";
 import Link from "next/link";
 
 /**
@@ -23,9 +24,7 @@ export default function GlobalNotFound() {
 
       <header className="relative z-10 flex items-center justify-center h-16 border-b border-white/5">
         <Link href="/" className="flex items-center gap-2.5 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-neon-violet">
-          <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center">
-            <span className="font-display font-bold text-white text-sm leading-none">N</span>
-          </span>
+          <LogoMark size={36} />
           <span className="font-display font-semibold text-paper-50 tracking-widest uppercase text-sm">Nexonic</span>
         </Link>
       </header>

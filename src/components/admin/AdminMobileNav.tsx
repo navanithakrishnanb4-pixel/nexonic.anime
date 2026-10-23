@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoMark } from "@/components/brand/Logo";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -30,9 +31,7 @@ export function AdminMobileNav() {
     <div className="md:hidden">
       <header className="h-16 flex items-center justify-between px-5 border-b border-white/5 bg-ink-950 sticky top-0 z-40">
         <Link href="/admin" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shrink-0">
-            <span className="font-display font-bold text-white text-xs leading-none">N</span>
-          </div>
+          <LogoMark size={28} />
           <span className="font-display font-semibold text-paper-50 text-sm tracking-wide uppercase">
             Admin
           </span>

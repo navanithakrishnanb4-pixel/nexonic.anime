@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoMark } from "@/components/brand/Logo";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,12 +9,9 @@ import { primaryNav } from "@/lib/nav";
 import { DURATION } from "@/lib/motion";
 
 function Logo({ size = "md" }: { size?: "sm" | "md" }) {
-  const box = size === "md" ? "w-8 h-8" : "w-7 h-7";
   return (
     <span className="flex items-center gap-2.5">
-      <span className={`${box} rounded-lg bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shrink-0`}>
-        <span className="font-display font-bold text-white text-sm leading-none">N</span>
-      </span>
+      <LogoMark size={size === "md" ? 36 : 30} priority />
       <span className="font-display font-semibold text-paper-50 tracking-widest uppercase text-sm">
         Nexonic
       </span>

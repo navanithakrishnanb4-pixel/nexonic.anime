@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoLockup } from "@/components/brand/Logo";
 import { ScrollReveal } from "@/components/motion/ScrollReveal";
 
 export const metadata: Metadata = {
@@ -36,8 +37,8 @@ export default function StudioPage() {
         />
 
         <div className="relative z-10 max-w-[1440px] mx-auto px-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-neon-violet/30">
-            <span className="font-display font-bold text-white text-2xl">N</span>
+          <div className="mx-auto mb-8 w-fit">
+            <LogoLockup width={180} priority />
           </div>
           <p className="font-outfit text-neon-violet-soft text-[11px] font-semibold tracking-widest uppercase mb-5">
             The Studio

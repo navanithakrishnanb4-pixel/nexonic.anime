@@ -1,3 +1,4 @@
+import { LogoMark } from "@/components/brand/Logo";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -46,9 +47,7 @@ export default async function AdminLoginPage() {
 
       <div className="relative z-10 w-full max-w-sm flex flex-col items-center gap-6">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center">
-            <span className="font-display font-bold text-white text-base leading-none">N</span>
-          </div>
+          <LogoMark size={40} />
           <span className="font-display font-semibold text-paper-50 tracking-wide uppercase">
             Nexonic <span className="text-paper-500 font-normal normal-case">Admin</span>
           </span>

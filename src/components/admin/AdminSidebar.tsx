@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoMark } from "@/components/brand/Logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
@@ -22,9 +23,7 @@ export function AdminSidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-white/5 bg-ink-950 h-screen sticky top-0">
       <div className="h-16 flex items-center gap-2.5 px-5 border-b border-white/5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shrink-0">
-          <span className="font-display font-bold text-white text-sm leading-none">N</span>
-        </div>
+        <LogoMark size={36} />
         <div className="leading-none">
           <span className="font-display font-semibold text-paper-50 text-sm tracking-wide uppercase block">
             Nexonic

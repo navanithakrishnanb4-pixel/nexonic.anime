@@ -1,3 +1,4 @@
+import { LogoMark } from "@/components/brand/Logo";
 import Link from "next/link";
 import { footerLegalLinks } from "@/lib/nav";
 
@@ -45,9 +46,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-violet to-neon-pink flex items-center justify-center shadow-lg shadow-neon-violet/25">
-                <span className="font-display font-bold text-white text-base leading-none">N</span>
-              </div>
+              <LogoMark size={44} />
               <span className="font-display font-semibold text-paper-50 tracking-widest uppercase text-base">
                 Nexonic
               </span>

@@ -5,6 +5,7 @@ import { SearchClient } from "@/components/search/SearchClient";
 export const metadata: Metadata = {
   title: "Search",
   description: "Search NEXONIC works and journal posts.",
+  robots: { index: false, follow: true },
 };
 
 export default function SearchPage() {
